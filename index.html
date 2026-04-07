@@ -739,9 +739,10 @@ let selectedAssignmentId = null;
 
 // ── API 호출 ──────────────────────────
 async function api(params) {
-  const url = new URL(API);
-  Object.entries(params).forEach(([k,v]) => url.searchParams.set(k, v));
-  const res = await fetch(url);
+  const qs = Object.entries(params)
+    .map(([k,v]) => k + "=" + encodeURIComponent(v))
+    .join("&");
+  const res = await fetch(API + "?" + qs);
   return res.json();
 }
 
