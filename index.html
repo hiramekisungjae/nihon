@@ -3,419 +3,770 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>우리 반 활동 기록</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<title>수업 활동 기록</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #f5f3ee;
-    --surface: #ffffff;
-    --surface2: #faf9f6;
-    --primary: #2d6a4f;
-    --primary-light: #52b788;
-    --primary-pale: #d8f3dc;
-    --accent: #e76f51;
-    --text: #1a1a1a;
-    --text2: #555;
-    --text3: #999;
-    --border: #e0ddd6;
-    --shadow: 0 2px 16px rgba(0,0,0,0.07);
-    --radius: 14px;
-    --radius-sm: 8px;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'Noto Sans KR', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    font-size: 15px;
-    line-height: 1.6;
-  }
-  .hidden { display: none !important; }
-  .page { display: none; min-height: 100vh; }
-  .page.active { display: block; }
-
-  button { cursor: pointer; border: none; font-family: inherit; font-size: 14px; transition: all 0.18s; }
-  input, textarea, select {
-    font-family: inherit; font-size: 14px;
-    border: 1.5px solid var(--border); border-radius: var(--radius-sm);
-    padding: 10px 14px; width: 100%; background: var(--surface);
-    color: var(--text); outline: none; transition: border-color 0.18s;
-  }
-  input:focus, textarea:focus, select:focus { border-color: var(--primary-light); }
-  textarea { resize: vertical; min-height: 100px; }
-  label { font-size: 13px; color: var(--text2); font-weight: 500; display: block; margin-bottom: 5px; }
-
-  .btn-primary { background: var(--primary); color: #fff; padding: 12px 28px; border-radius: var(--radius-sm); font-weight: 500; }
-  .btn-primary:hover { background: #235c43; transform: translateY(-1px); }
-  .btn-outline { background: transparent; color: var(--primary); border: 1.5px solid var(--primary); padding: 9px 20px; border-radius: var(--radius-sm); font-weight: 500; }
-  .btn-outline:hover { background: var(--primary-pale); }
-  .btn-sm { padding: 7px 14px; font-size: 13px; border-radius: 6px; }
-
-  .chip { display: inline-block; background: var(--primary-pale); color: var(--primary); font-size: 12px; font-weight: 500; padding: 3px 10px; border-radius: 20px; }
-  .chip.orange { background: #fde8e0; color: #c0522b; }
-  .chip.gray { background: #efefef; color: #666; }
-
-  .toast {
-    position: fixed; bottom: 28px; left: 50%;
-    transform: translateX(-50%) translateY(80px);
-    background: #1a1a1a; color: #fff; padding: 12px 24px;
-    border-radius: 30px; font-size: 14px; font-weight: 500;
-    z-index: 9999; transition: transform 0.3s cubic-bezier(.34,1.56,.64,1);
-    white-space: nowrap;
-  }
-  .toast.show { transform: translateX(-50%) translateY(0); }
-
-  .loading-overlay {
-    position: fixed; inset: 0; background: rgba(245,243,238,0.85);
-    display: flex; align-items: center; justify-content: center;
-    z-index: 8888; flex-direction: column; gap: 14px;
-  }
-  .spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.7s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .loading-overlay p { color: var(--text2); font-size: 14px; }
-
-  /* 로그인 */
-  #page-login { display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
-  .login-card {
-    background: var(--surface); border-radius: 24px; padding: 52px 44px;
-    width: 100%; max-width: 400px; box-shadow: var(--shadow); text-align: center;
-    animation: fadeUp 0.5s ease;
-  }
-  @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
-  .login-icon { width: 64px; height: 64px; background: var(--primary-pale); border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 30px; }
-  .login-card h1 { font-family: 'DM Serif Display', serif; font-size: 26px; font-weight: 400; margin-bottom: 6px; }
-  .login-card .subtitle { font-size: 13px; color: var(--text3); margin-bottom: 36px; }
-  .code-input-wrap input { text-align: center; font-size: 22px; font-weight: 700; letter-spacing: 6px; text-transform: uppercase; padding: 14px; margin-bottom: 10px; }
-  .login-divider { display: flex; align-items: center; gap: 12px; margin: 24px 0; color: var(--text3); font-size: 12px; }
-  .login-divider::before, .login-divider::after { content:''; flex:1; height:1px; background:var(--border); }
-
-  /* 네비 */
-  .nav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100; }
-  .nav-brand { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--primary); font-weight: 400; }
-  .nav-user { display: flex; align-items: center; gap: 12px; font-size: 13px; color: var(--text2); }
-  .btn-logout { background: none; color: var(--text3); font-size: 12px; padding: 5px 10px; border: 1px solid var(--border); border-radius: 6px; }
-  .btn-logout:hover { color: var(--text); border-color: var(--text3); }
-
-  /* 탭 */
-  .tabs { display: flex; gap: 4px; padding: 16px 24px 0; border-bottom: 1px solid var(--border); background: var(--surface); }
-  .tab-btn { background: none; color: var(--text3); padding: 10px 18px; border-radius: var(--radius-sm) var(--radius-sm) 0 0; font-size: 14px; font-weight: 500; border-bottom: 2px solid transparent; margin-bottom: -1px; }
-  .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); background: var(--bg); }
-  .tab-btn:hover:not(.active) { color: var(--text2); }
-
-  .container { max-width: 860px; margin: 0 auto; padding: 28px 20px; }
-  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-  .section-header h2 { font-size: 18px; font-weight: 700; }
-
-  .card { background: var(--surface); border-radius: var(--radius); padding: 22px 24px; box-shadow: var(--shadow); margin-bottom: 14px; border: 1px solid var(--border); transition: box-shadow 0.18s; }
-  .card:hover { box-shadow: 0 4px 24px rgba(0,0,0,0.1); }
-  .card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
-  .card-title { font-size: 16px; font-weight: 700; }
-  .card-meta { font-size: 12px; color: var(--text3); margin-top: 3px; }
-  .card-body { font-size: 14px; color: var(--text2); white-space: pre-wrap; line-height: 1.7; }
-
-  .feedback-box { background: #fffbf0; border: 1.5px solid #f0d58c; border-radius: var(--radius-sm); padding: 14px 16px; margin-top: 14px; }
-  .feedback-box .fb-label { font-size: 12px; font-weight: 700; color: #b07d00; margin-bottom: 6px; }
-  .feedback-box .fb-content { font-size: 14px; color: #5a4000; white-space: pre-wrap; line-height: 1.7; }
-  .no-feedback { font-size: 13px; color: var(--text3); margin-top: 10px; font-style: italic; }
-
-  .assignment-card { background: var(--surface); border-radius: var(--radius); padding: 18px 20px; margin-bottom: 10px; border: 2px solid var(--border); cursor: pointer; transition: all 0.18s; display: flex; align-items: center; gap: 16px; }
-  .assignment-card:hover { border-color: var(--primary-light); background: var(--surface2); }
-  .assignment-card.selected { border-color: var(--primary); background: var(--primary-pale); }
-  .assignment-card .a-num { width: 40px; height: 40px; background: var(--primary-pale); color: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; flex-shrink: 0; }
-  .assignment-card.selected .a-num { background: var(--primary); color: #fff; }
-  .assignment-card .a-title { font-weight: 700; font-size: 15px; }
-  .assignment-card .a-desc { font-size: 13px; color: var(--text3); margin-top: 2px; }
-  .assignment-card .a-due { font-size: 12px; color: var(--accent); font-weight: 500; }
-
-  .submit-form { background: var(--surface); border-radius: var(--radius); padding: 26px; border: 1px solid var(--border); box-shadow: var(--shadow); margin-top: 20px; }
-  .submit-form h3 { font-size: 16px; margin-bottom: 16px; }
-  .form-group { margin-bottom: 16px; }
-  .form-row { display: flex; gap: 12px; }
-  .form-row .form-group { flex: 1; }
-  .form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 6px; }
-
-  .filter-bar { background: var(--surface); border-radius: var(--radius); padding: 16px 20px; margin-bottom: 20px; border: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
-  .filter-bar .form-group { flex: 1; min-width: 140px; margin: 0; }
-
-  .sub-card { background: var(--surface); border-radius: var(--radius); padding: 22px 24px; border: 1px solid var(--border); box-shadow: var(--shadow); margin-bottom: 14px; }
-  .sub-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
-  .sub-student { font-weight: 700; font-size: 15px; }
-  .sub-meta { font-size: 12px; color: var(--text3); margin-top: 2px; }
-  .sub-content { font-size: 14px; color: var(--text2); white-space: pre-wrap; line-height: 1.7; background: var(--surface2); padding: 14px; border-radius: var(--radius-sm); margin-bottom: 14px; }
-  .feedback-saved { background: #f0fdf4; border: 1.5px solid #86efac; border-radius: var(--radius-sm); padding: 12px 14px; font-size: 14px; color: #166534; white-space: pre-wrap; margin-bottom: 10px; line-height: 1.7; }
-
-  .student-table-wrap { overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; font-size: 14px; }
-  th { text-align: left; padding: 10px 14px; background: var(--surface2); color: var(--text2); font-size: 12px; font-weight: 700; border-bottom: 1px solid var(--border); }
-  td { padding: 12px 14px; border-bottom: 1px solid var(--border); }
-  tr:last-child td { border-bottom: none; }
-  tr:hover td { background: var(--surface2); }
-  .code-badge { font-family: monospace; font-size: 15px; font-weight: 700; color: var(--primary); background: var(--primary-pale); padding: 3px 10px; border-radius: 6px; letter-spacing: 2px; }
-
-  .empty-state { text-align: center; padding: 60px 20px; color: var(--text3); }
-  .empty-state .icon { font-size: 44px; margin-bottom: 14px; }
-
-  @media (max-width: 600px) {
-    .login-card { padding: 36px 24px; }
-    .container { padding: 18px 14px; }
-    .nav { padding: 0 14px; }
-    .tabs { padding: 14px 14px 0; overflow-x: auto; }
-    .filter-bar { flex-direction: column; }
-  }
+:root {
+  --ig-bg: #fafafa;
+  --ig-surface: #ffffff;
+  --ig-border: #dbdbdb;
+  --ig-text: #262626;
+  --ig-text2: #737373;
+  --ig-text3: #a8a8a8;
+  --ig-blue: #0095f6;
+  --ig-blue-dark: #00376b;
+  --ig-grad: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+  --ig-grad-btn: linear-gradient(135deg, #405de6, #5851db, #833ab4, #c13584, #e1306c, #fd1d1d);
+  --ig-green: #1dbf73;
+  --ig-red: #ed4956;
+  --ig-yellow: #ffd60a;
+  --shadow: 0 1px 3px rgba(0,0,0,0.12);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background: var(--ig-bg);
+  color: var(--ig-text);
+  min-height: 100vh;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.hidden { display: none !important; }
+.page { display: none; min-height: 100vh; }
+.page.active { display: block; }
+ 
+button { cursor: pointer; border: none; font-family: inherit; font-size: 14px; transition: all 0.15s; }
+input, textarea, select {
+  font-family: inherit;
+  font-size: 14px;
+  border: 1px solid var(--ig-border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  width: 100%;
+  background: var(--ig-bg);
+  color: var(--ig-text);
+  outline: none;
+  transition: border-color 0.15s;
+}
+input:focus, textarea:focus, select:focus { border-color: var(--ig-text3); }
+textarea { resize: vertical; min-height: 100px; }
+label { font-size: 12px; color: var(--ig-text2); font-weight: 600; display: block; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+ 
+.btn-primary {
+  background: var(--ig-blue);
+  color: #fff;
+  padding: 8px 20px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 14px;
+}
+.btn-primary:hover { background: #1877cc; }
+.btn-primary:active { transform: scale(0.98); }
+ 
+.btn-grad {
+  background: var(--ig-grad-btn);
+  color: #fff;
+  padding: 10px 28px;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: 15px;
+  width: 100%;
+}
+.btn-grad:hover { opacity: 0.92; }
+ 
+.btn-outline {
+  background: transparent;
+  color: var(--ig-blue);
+  border: 1.5px solid var(--ig-blue);
+  padding: 7px 18px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+}
+.btn-outline:hover { background: rgba(0,149,246,0.07); }
+ 
+.btn-red {
+  background: var(--ig-red);
+  color: #fff;
+  padding: 7px 16px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+}
+.btn-red:hover { background: #c73544; }
+ 
+.btn-sm { padding: 6px 12px; font-size: 13px; border-radius: 6px; }
+ 
+/* Status chips */
+.chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 700;
+  padding: 3px 10px; border-radius: 20px;
+}
+.chip-green { background: #d1fae5; color: #065f46; }
+.chip-red { background: #fee2e2; color: #991b1b; }
+.chip-blue { background: #dbeafe; color: #1e40af; }
+.chip-gray { background: #f3f4f6; color: #6b7280; }
+.chip-yellow { background: #fef3c7; color: #92400e; }
+ 
+/* Toast */
+.toast {
+  position: fixed; bottom: 28px; left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: #262626; color: #fff;
+  padding: 12px 24px; border-radius: 30px;
+  font-size: 14px; font-weight: 500;
+  z-index: 9999; transition: transform 0.3s cubic-bezier(.34,1.56,.64,1);
+  white-space: nowrap;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+ 
+/* Loading */
+.loading-overlay {
+  position: fixed; inset: 0;
+  background: rgba(250,250,250,0.9);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 8888; flex-direction: column; gap: 14px;
+}
+.spinner {
+  width: 36px; height: 36px;
+  border: 3px solid var(--ig-border);
+  border-top-color: var(--ig-blue);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-overlay p { color: var(--ig-text2); font-size: 14px; }
+ 
+/* ── 로그인 ── */
+#page-login {
+  display: flex; align-items: center; justify-content: center;
+  padding: 40px 20px; min-height: 100vh;
+  background: var(--ig-surface);
+}
+.login-wrap {
+  width: 100%; max-width: 380px;
+  animation: fadeUp 0.4s ease;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.login-logo {
+  text-align: center; margin-bottom: 32px;
+}
+.login-logo-icon {
+  display: inline-block;
+  width: 80px; height: 80px;
+  background: var(--ig-grad);
+  border-radius: 22px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 38px; margin: 0 auto 14px;
+  box-shadow: 0 4px 20px rgba(193,53,132,0.35);
+}
+.login-logo h1 {
+  font-size: 28px; font-weight: 900;
+  background: var(--ig-grad);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.5px;
+}
+.login-logo p { font-size: 13px; color: var(--ig-text2); margin-top: 4px; }
+.login-box {
+  background: var(--ig-surface);
+  border: 1px solid var(--ig-border);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  margin-bottom: 12px;
+}
+.login-box .form-group { margin-bottom: 12px; }
+.login-box label { display: none; }
+.login-box input {
+  background: #fafafa;
+  border-radius: 6px;
+  font-size: 14px;
+  padding: 11px 12px;
+}
+.login-divider {
+  display: flex; align-items: center; gap: 12px;
+  margin: 18px 0; color: var(--ig-text3); font-size: 12px; font-weight: 600;
+}
+.login-divider::before, .login-divider::after {
+  content: ''; flex: 1; height: 1px; background: var(--ig-border);
+}
+.login-box2 {
+  background: var(--ig-surface);
+  border: 1px solid var(--ig-border);
+  border-radius: var(--radius);
+  padding: 22px 24px;
+  text-align: center;
+  font-size: 14px; color: var(--ig-text2);
+}
+.login-box2 span { color: var(--ig-blue); font-weight: 700; cursor: pointer; }
+ 
+/* ── 네비 ── */
+.nav {
+  background: var(--ig-surface);
+  border-bottom: 1px solid var(--ig-border);
+  padding: 0 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 54px; position: sticky; top: 0; z-index: 100;
+}
+.nav-brand {
+  font-size: 20px; font-weight: 900;
+  background: var(--ig-grad);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text; letter-spacing: -0.5px;
+}
+.nav-user { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--ig-text2); }
+.nav-avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--ig-grad); display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; color: #fff; flex-shrink: 0;
+}
+.btn-logout {
+  background: none; color: var(--ig-text3); font-size: 12px;
+  padding: 5px 10px; border: 1px solid var(--ig-border); border-radius: 6px;
+}
+.btn-logout:hover { color: var(--ig-text); border-color: var(--ig-text3); }
+ 
+/* ── 탭 ── */
+.tabs {
+  background: var(--ig-surface);
+  border-bottom: 1px solid var(--ig-border);
+  display: flex; gap: 0;
+}
+.tab-btn {
+  background: none; color: var(--ig-text3);
+  padding: 14px 20px; font-size: 13px; font-weight: 600;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px; letter-spacing: 0.3px; flex: 1;
+  text-align: center;
+}
+.tab-btn.active { color: var(--ig-text); border-bottom-color: var(--ig-text); }
+.tab-btn:hover:not(.active) { color: var(--ig-text2); }
+ 
+/* ── 레이아웃 ── */
+.container { max-width: 860px; margin: 0 auto; padding: 22px 16px; }
+ 
+.section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.section-header h2 { font-size: 16px; font-weight: 700; }
+ 
+/* ── 카드 ── */
+.card {
+  background: var(--ig-surface);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  box-shadow: var(--shadow);
+  margin-bottom: 12px;
+  border: 1px solid var(--ig-border);
+  transition: box-shadow 0.15s;
+}
+.card:hover { box-shadow: var(--shadow-lg); }
+.card-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 10px; margin-bottom: 10px;
+}
+.card-title { font-size: 15px; font-weight: 700; }
+.card-meta { font-size: 12px; color: var(--ig-text3); margin-top: 2px; }
+.card-body { font-size: 14px; color: var(--ig-text2); white-space: pre-wrap; line-height: 1.7; }
+ 
+/* ── 과제 가로 그리드 ── */
+.assignment-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.assignment-pill {
+  background: var(--ig-surface);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  border: 1.5px solid var(--ig-border);
+  cursor: pointer;
+  transition: all 0.15s;
+  position: relative;
+  overflow: hidden;
+}
+.assignment-pill:hover { border-color: var(--ig-blue); box-shadow: var(--shadow-lg); transform: translateY(-1px); }
+.assignment-pill.submitted { border-color: #86efac; background: #f0fdf4; }
+.assignment-pill.not-submitted { border-color: #fca5a5; background: #fff5f5; }
+.assignment-pill.selected { border-color: var(--ig-blue); box-shadow: 0 0 0 3px rgba(0,149,246,0.15); }
+.ap-num {
+  font-size: 11px; font-weight: 700; color: var(--ig-text3);
+  text-transform: uppercase; letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+.ap-title { font-size: 14px; font-weight: 700; color: var(--ig-text); line-height: 1.3; }
+.ap-due { font-size: 11px; color: var(--ig-red); margin-top: 4px; font-weight: 600; }
+.ap-status {
+  position: absolute; top: 10px; right: 10px;
+  width: 8px; height: 8px; border-radius: 50%;
+}
+.ap-status.green { background: var(--ig-green); }
+.ap-status.red { background: var(--ig-red); }
+ 
+/* ── 제출 폼 ── */
+.submit-form {
+  background: var(--ig-surface);
+  border-radius: var(--radius);
+  padding: 22px;
+  border: 1px solid var(--ig-border);
+  box-shadow: var(--shadow);
+  margin-top: 16px;
+}
+.submit-form h3 { font-size: 15px; margin-bottom: 16px; font-weight: 700; }
+.form-group { margin-bottom: 14px; }
+.form-row { display: flex; gap: 10px; }
+.form-row .form-group { flex: 1; }
+.form-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px; }
+ 
+/* ── 피드백 박스 ── */
+.feedback-box {
+  background: #fffbf0; border: 1.5px solid #fcd34d;
+  border-radius: var(--radius-sm); padding: 14px 16px; margin-top: 12px;
+}
+.feedback-box .fb-label {
+  font-size: 12px; font-weight: 700; color: #92400e; margin-bottom: 6px;
+  display: flex; align-items: center; gap: 5px;
+}
+.feedback-box .fb-content { font-size: 14px; color: #78350f; white-space: pre-wrap; line-height: 1.7; }
+.no-feedback { font-size: 13px; color: var(--ig-text3); margin-top: 10px; font-style: italic; }
+ 
+/* ── 교사 필터 ── */
+.filter-bar {
+  background: var(--ig-surface); border-radius: var(--radius);
+  padding: 14px 16px; margin-bottom: 16px;
+  border: 1px solid var(--ig-border);
+  display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end;
+}
+.filter-bar .form-group { flex: 1; min-width: 130px; margin: 0; }
+.filter-bar label { margin-bottom: 5px; }
+ 
+/* ── 반 필터 버튼 그룹 ── */
+.class-filter-bar {
+  display: flex; gap: 6px; flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.class-filter-btn {
+  background: var(--ig-surface); border: 1.5px solid var(--ig-border);
+  color: var(--ig-text2); padding: 5px 14px;
+  border-radius: 20px; font-size: 13px; font-weight: 600;
+  transition: all 0.15s;
+}
+.class-filter-btn.active, .class-filter-btn:hover {
+  background: var(--ig-text); color: #fff; border-color: var(--ig-text);
+}
+ 
+/* ── 제출물 카드 (교사) ── */
+.sub-card {
+  background: var(--ig-surface); border-radius: var(--radius);
+  padding: 18px 20px; border: 1px solid var(--ig-border);
+  box-shadow: var(--shadow); margin-bottom: 12px;
+}
+.sub-card-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px; flex-wrap: wrap; gap: 8px;
+}
+.sub-student { font-weight: 700; font-size: 15px; }
+.sub-meta { font-size: 12px; color: var(--ig-text3); margin-top: 2px; }
+.sub-content {
+  font-size: 14px; color: var(--ig-text2); white-space: pre-wrap;
+  line-height: 1.7; background: var(--ig-bg); padding: 12px;
+  border-radius: var(--radius-sm); margin-bottom: 12px;
+  border: 1px solid var(--ig-border);
+}
+.feedback-input-area textarea { min-height: 72px; }
+.feedback-saved {
+  background: #f0fdf4; border: 1.5px solid #86efac;
+  border-radius: var(--radius-sm); padding: 12px 14px;
+  font-size: 14px; color: #166534; white-space: pre-wrap;
+  margin-bottom: 10px; line-height: 1.7;
+}
+.sub-action-bar { display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px; }
+ 
+/* ── 학생 테이블 ── */
+.student-table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th {
+  text-align: left; padding: 10px 12px;
+  background: var(--ig-bg); color: var(--ig-text2);
+  font-size: 12px; font-weight: 700;
+  border-bottom: 1px solid var(--ig-border);
+  cursor: pointer; user-select: none;
+}
+th:hover { background: #f0f0f0; }
+th .sort-icon { margin-left: 4px; opacity: 0.4; font-size: 10px; }
+th.sorted .sort-icon { opacity: 1; }
+td { padding: 11px 12px; border-bottom: 1px solid var(--ig-border); color: var(--ig-text); }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--ig-bg); }
+.code-badge {
+  font-family: monospace; font-size: 14px; font-weight: 700;
+  color: var(--ig-blue); background: #dbeafe;
+  padding: 3px 10px; border-radius: 6px; letter-spacing: 2px;
+}
+ 
+/* ── 빈 상태 ── */
+.empty-state { text-align: center; padding: 50px 20px; color: var(--ig-text3); }
+.empty-state .icon { font-size: 40px; margin-bottom: 12px; }
+.empty-state p { font-size: 14px; }
+ 
+/* ── 반응형 ── */
+@media (max-width: 600px) {
+  .login-wrap { padding: 0 4px; }
+  .container { padding: 14px 10px; }
+  .nav { padding: 0 12px; }
+  .assignment-grid { grid-template-columns: 1fr 1fr; }
+  .filter-bar { flex-direction: column; }
+  .form-row { flex-direction: column; }
+}
 </style>
 </head>
 <body>
-
+ 
+<!-- 로딩 -->
 <div class="loading-overlay hidden" id="loading">
   <div class="spinner"></div>
   <p id="loading-text">불러오는 중...</p>
 </div>
+ 
+<!-- 토스트 -->
 <div class="toast" id="toast"></div>
-
-<!-- 로그인 -->
+ 
+<!-- ══ 로그인 ══ -->
 <div class="page active" id="page-login" style="display:flex;">
-  <div class="login-card">
-    <div class="login-icon">📚</div>
-    <h1>우리 반 활동 기록</h1>
-    <p class="subtitle">개인 코드를 입력하고 접속하세요</p>
-    <div class="form-group">
-      <div class="code-input-wrap">
-        <input type="text" id="student-code" maxlength="6" placeholder="예: A3K9M2"
+  <div class="login-wrap">
+    <div class="login-logo">
+      <div class="login-logo-icon">📚</div>
+      <h1>수업 활동 기록</h1>
+      <p>고교학점제 수업 과제 제출 시스템</p>
+    </div>
+ 
+    <div class="login-box">
+      <div class="form-group">
+        <input type="text" id="student-code" maxlength="6" placeholder="학생 코드 6자리 (예: A3K9M2)"
           oninput="this.value=this.value.toUpperCase()"
-          onkeydown="if(event.key==='Enter')doLoginStudent()">
+          onkeydown="if(event.key==='Enter')loginStudent()">
       </div>
-      <button class="btn-primary" style="width:100%" onclick="doLoginStudent()">학생으로 접속</button>
+      <button class="btn-grad" onclick="loginStudent()">학생으로 접속</button>
+ 
+      <div class="login-divider">교사 전용</div>
+ 
+      <div class="form-group">
+        <input type="password" id="teacher-pw" placeholder="교사 비밀번호"
+          onkeydown="if(event.key==='Enter')loginTeacher()">
+      </div>
+      <button class="btn-outline" style="width:100%" onclick="loginTeacher()">교사로 접속</button>
     </div>
-    <div class="login-divider">교사</div>
-    <div class="form-group" style="margin-bottom:10px">
-      <input type="password" id="teacher-pw" placeholder="교사 비밀번호"
-        onkeydown="if(event.key==='Enter')doLoginTeacher()">
+ 
+    <div class="login-box2">
+      코드를 모르시나요? <span onclick="toast('담당 선생님께 문의해 주세요 😊')">선생님께 문의</span>
     </div>
-    <button class="btn-outline" style="width:100%" onclick="doLoginTeacher()">교사로 접속</button>
   </div>
 </div>
-
-<!-- 학생 화면 -->
+ 
+<!-- ══ 학생 화면 ══ -->
 <div class="page" id="page-student">
   <nav class="nav">
-    <span class="nav-brand">📚 활동 기록</span>
+    <span class="nav-brand">수업 활동 기록</span>
     <div class="nav-user">
-      <span><strong id="s-name"></strong> (<span id="s-class"></span>)</span>
-      <button class="btn-logout" onclick="doLogout()">로그아웃</button>
+      <div class="nav-avatar" id="s-avatar">?</div>
+      <span style="font-weight:600" id="s-name"></span>
+      <span style="color:var(--ig-text3);font-size:12px" id="s-class"></span>
+      <button class="btn-logout" onclick="logout()">로그아웃</button>
     </div>
   </nav>
   <div class="tabs">
-    <button class="tab-btn active" id="s-tab-btn-submit" onclick="switchStudentTab('submit')">과제 제출</button>
-    <button class="tab-btn" id="s-tab-btn-my" onclick="switchStudentTab('my')">내 제출물·피드백</button>
+    <button class="tab-btn active" onclick="switchTab('s','submit')">과제 제출</button>
+    <button class="tab-btn" onclick="switchTab('s','my')">내 제출물 · 피드백</button>
   </div>
+ 
+  <!-- 과제 제출 탭 -->
   <div id="s-tab-submit" class="container">
-    <div class="section-header"><h2>과제 선택</h2></div>
-    <div id="assignment-list"><div class="empty-state"><div class="icon">📋</div><p>불러오는 중...</p></div></div>
+    <div class="section-header">
+      <h2>과제 목록</h2>
+      <div style="display:flex;gap:6px;align-items:center">
+        <span style="font-size:12px;color:var(--ig-text3)">
+          <span style="display:inline-block;width:8px;height:8px;background:var(--ig-green);border-radius:50%;margin-right:3px"></span>제출
+          <span style="display:inline-block;width:8px;height:8px;background:var(--ig-red);border-radius:50%;margin-left:8px;margin-right:3px"></span>미제출
+        </span>
+      </div>
+    </div>
+    <div id="assignment-list" class="assignment-grid">
+      <div class="empty-state" style="grid-column:1/-1"><div class="icon">📋</div><p>불러오는 중...</p></div>
+    </div>
+ 
     <div class="submit-form hidden" id="submit-form">
       <h3 id="submit-form-title">과제 제출</h3>
       <div class="form-group">
-        <label for="sub-content">활동 내용 *</label>
+        <label>활동 내용 *</label>
         <textarea id="sub-content" placeholder="이번 수업에서 한 활동, 느낀 점, 배운 점 등을 자유롭게 적어주세요."></textarea>
       </div>
       <div class="form-group">
-        <label for="sub-file">파일 링크 (선택) — Google Drive 공유 링크</label>
+        <label>파일 링크 (선택) — Google Drive 공유 링크</label>
         <input type="url" id="sub-file" placeholder="https://drive.google.com/...">
       </div>
       <div class="form-actions">
         <button class="btn-outline" onclick="cancelSubmit()">취소</button>
-        <button class="btn-primary" onclick="doSubmitAssignment()">제출하기</button>
+        <button class="btn-primary" onclick="submitAssignment()">제출하기</button>
       </div>
     </div>
   </div>
+ 
+  <!-- 내 제출물 탭 -->
   <div id="s-tab-my" class="container hidden">
     <div class="section-header">
       <h2>내 제출물 · 피드백</h2>
       <button class="btn-outline btn-sm" onclick="loadMySubmissions()">새로고침</button>
     </div>
-    <div id="my-submissions-list"><div class="empty-state"><div class="icon">📝</div><p>불러오는 중...</p></div></div>
+    <div id="my-submissions-list">
+      <div class="empty-state"><div class="icon">📝</div><p>불러오는 중...</p></div>
+    </div>
   </div>
 </div>
-
-<!-- 교사 화면 -->
+ 
+<!-- ══ 교사 화면 ══ -->
 <div class="page" id="page-teacher">
   <nav class="nav">
-    <span class="nav-brand">📚 활동 기록 <span style="font-size:12px;color:#999;font-family:'Noto Sans KR'">(교사)</span></span>
+    <span class="nav-brand">수업 활동 기록 <span style="font-size:11px;font-weight:400;color:var(--ig-text3);-webkit-text-fill-color:var(--ig-text3)">(교사)</span></span>
     <div class="nav-user">
-      <button class="btn-logout" onclick="doLogout()">로그아웃</button>
+      <button class="btn-logout" onclick="logout()">로그아웃</button>
     </div>
   </nav>
   <div class="tabs">
-    <button class="tab-btn active" id="t-tab-btn-submissions" onclick="switchTeacherTab('submissions')">제출물·피드백</button>
-    <button class="tab-btn" id="t-tab-btn-students" onclick="switchTeacherTab('students')">학생 관리</button>
-    <button class="tab-btn" id="t-tab-btn-assignments" onclick="switchTeacherTab('assignments')">과제 관리</button>
+    <button class="tab-btn active" onclick="switchTab('t','submissions')">제출물 · 피드백</button>
+    <button class="tab-btn" onclick="switchTab('t','students')">학생 관리</button>
+    <button class="tab-btn" onclick="switchTab('t','assignments')">과제 관리</button>
   </div>
-
+ 
+  <!-- 제출물·피드백 탭 -->
   <div id="t-tab-submissions" class="container">
     <div class="filter-bar">
       <div class="form-group">
-        <label for="t-filter-assignment">과제 필터</label>
-        <select id="t-filter-assignment"><option value="">전체 과제</option></select>
+        <label>과제 필터</label>
+        <select id="t-filter-assignment" onchange="loadAllSubmissions()">
+          <option value="">전체 과제</option>
+        </select>
       </div>
       <div class="form-group">
-        <label for="t-filter-student">학생 필터</label>
-        <select id="t-filter-student"><option value="">전체 학생</option></select>
+        <label>학생 필터</label>
+        <select id="t-filter-student" onchange="loadAllSubmissions()">
+          <option value="">전체 학생</option>
+        </select>
       </div>
-      <button class="btn-primary btn-sm" onclick="loadAllSubmissions()">조회</button>
+      <div class="form-group" style="max-width:130px;">
+        <label>정렬</label>
+        <select id="t-sort" onchange="loadAllSubmissions()">
+          <option value="date_desc">최신순</option>
+          <option value="student">학생별</option>
+          <option value="assignment">과제별</option>
+        </select>
+      </div>
+      <button class="btn-primary btn-sm" onclick="loadAllSubmissions()" style="align-self:flex-end">조회</button>
     </div>
-    <div id="all-submissions-list"><div class="empty-state"><div class="icon">📋</div><p>위 필터로 조회하세요</p></div></div>
+    <div id="all-submissions-list">
+      <div class="empty-state"><div class="icon">📋</div><p>위 필터로 조회하세요</p></div>
+    </div>
   </div>
-
+ 
+  <!-- 학생 관리 탭 -->
   <div id="t-tab-students" class="container hidden">
     <div class="section-header">
       <h2>학생 목록</h2>
-      <button class="btn-primary btn-sm" onclick="toggleAddStudentForm()">+ 학생 추가</button>
+      <button class="btn-primary btn-sm" onclick="showAddStudentForm()">+ 학생 추가</button>
     </div>
+ 
+    <!-- 학생 추가 폼 -->
     <div class="submit-form hidden" id="add-student-form">
       <h3>학생 추가</h3>
       <div class="form-row">
         <div class="form-group">
-          <label for="new-s-name">이름 *</label>
+          <label>수업장소 *</label>
+          <input type="text" id="new-s-class" placeholder="예: 1-1반, AI실습실">
+        </div>
+        <div class="form-group">
+          <label>학번 *</label>
+          <input type="text" id="new-s-number" placeholder="예: 20301">
+        </div>
+        <div class="form-group">
+          <label>이름 *</label>
           <input type="text" id="new-s-name" placeholder="홍길동">
         </div>
-        <div class="form-group">
-          <label for="new-s-class">반 *</label>
-          <input type="text" id="new-s-class" placeholder="1반">
-        </div>
-        <div class="form-group">
-          <label for="new-s-number">번호</label>
-          <input type="number" id="new-s-number" placeholder="1">
-        </div>
       </div>
       <div class="form-actions">
-        <button class="btn-outline" onclick="toggleAddStudentForm()">취소</button>
-        <button class="btn-primary" onclick="doAddStudent()">추가</button>
+        <button class="btn-outline" onclick="hideAddStudentForm()">취소</button>
+        <button class="btn-primary" onclick="addStudent()">추가</button>
       </div>
     </div>
-    <div class="submit-form" style="margin-bottom:20px">
-      <h3>반 일괄 추가</h3>
-      <div class="form-group">
-        <label for="bulk-class">반 이름</label>
-        <input type="text" id="bulk-class" placeholder="예: 1반">
+ 
+    <!-- 반 일괄 추가 폼 -->
+    <div class="submit-form" id="bulk-student-form">
+      <h3>일괄 추가</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>수업장소 *</label>
+          <input type="text" id="bulk-class" placeholder="예: AI실습실">
+        </div>
       </div>
       <div class="form-group">
-        <label for="bulk-names">학생 이름 (한 줄에 한 명)</label>
-        <textarea id="bulk-names" placeholder="홍길동&#10;김철수&#10;이영희" style="min-height:120px"></textarea>
+        <label>학번 / 이름 (한 줄에 한 명, 탭 또는 공백으로 구분)</label>
+        <textarea id="bulk-names" placeholder="20301 홍길동&#10;20302 김철수&#10;20303 이영희" style="min-height:110px"></textarea>
       </div>
       <div class="form-actions">
-        <button class="btn-primary" onclick="doBulkAddStudents()">일괄 추가</button>
+        <button class="btn-primary" onclick="bulkAddStudents()">일괄 추가</button>
       </div>
     </div>
+ 
+    <!-- 반 필터 -->
+    <div class="class-filter-bar" id="student-class-filter">
+      <button class="class-filter-btn active" onclick="filterStudentsByClass('all', this)">전체</button>
+    </div>
+ 
     <div class="card student-table-wrap">
-      <table>
-        <thead><tr><th>코드</th><th>이름</th><th>반</th><th>번호</th></tr></thead>
+      <table id="student-table">
+        <thead>
+          <tr>
+            <th onclick="sortStudentTable(0)" data-col="0">코드 <span class="sort-icon">↕</span></th>
+            <th onclick="sortStudentTable(1)" data-col="1">이름 <span class="sort-icon">↕</span></th>
+            <th onclick="sortStudentTable(2)" data-col="2">수업장소 <span class="sort-icon">↕</span></th>
+            <th onclick="sortStudentTable(3)" data-col="3">학번 <span class="sort-icon">↕</span></th>
+          </tr>
+        </thead>
         <tbody id="student-tbody"></tbody>
       </table>
     </div>
   </div>
-
+ 
+  <!-- 과제 관리 탭 -->
   <div id="t-tab-assignments" class="container hidden">
-    <div class="section-header"><h2>과제 목록</h2></div>
-    <div class="submit-form" style="margin-bottom:20px">
+    <div class="section-header">
+      <h2>과제 관리</h2>
+    </div>
+    <div class="submit-form" id="add-assignment-form">
       <h3>새 과제 등록</h3>
       <div class="form-group">
-        <label for="new-a-title">과제명 *</label>
+        <label>과제명 *</label>
         <input type="text" id="new-a-title" placeholder="예: 1차시 활동지">
       </div>
       <div class="form-group">
-        <label for="new-a-desc">설명</label>
+        <label>설명</label>
         <textarea id="new-a-desc" placeholder="과제 안내 내용" style="min-height:70px"></textarea>
       </div>
-      <div class="form-group">
-        <label for="new-a-due">마감일</label>
-        <input type="date" id="new-a-due">
+      <div class="form-row">
+        <div class="form-group">
+          <label>수업장소 (선택 — 비워두면 전체 공개)</label>
+          <input type="text" id="new-a-class" placeholder="예: AI실습실 (비워두면 전체)">
+        </div>
+        <div class="form-group">
+          <label>마감일</label>
+          <input type="date" id="new-a-due">
+        </div>
       </div>
       <div class="form-actions">
-        <button class="btn-primary" onclick="doAddAssignment()">등록</button>
+        <button class="btn-primary" onclick="addAssignment()">등록</button>
       </div>
     </div>
-    <div id="t-assignment-list"><div class="empty-state"><div class="icon">📋</div><p>불러오는 중...</p></div></div>
+ 
+    <div id="t-assignment-list">
+      <div class="empty-state"><div class="icon">📋</div><p>불러오는 중...</p></div>
+    </div>
   </div>
 </div>
-
+ 
 <script>
-var API_URL = "https://script.google.com/macros/s/AKfycbwCxWzPvhtLvcbwLS-vE4VO8aBJkMVRTADSMrEoCfgxrdpgZ1TtQ7ixAZ7s5Y4FFyf1/exec";
-var currentStudent = null;
-var teacherPw = null;
-var allAssignments = [];
-var allStudents = [];
-var selectedAssignmentId = null;
-
-function callAPI(params) {
-  var qs = Object.keys(params).map(function(k) {
-    return encodeURIComponent(k) + "=" + encodeURIComponent(params[k]);
-  }).join("&");
-  return fetch(API_URL + "?" + qs).then(function(r) { return r.json(); });
+const API = "https://script.google.com/macros/s/AKfycbwCxWzPvhtLvcbwLS-vE4VO8aBJkMVRTADSMrEoCfgxrdpgZ1TtQ7ixAZ7s5Y4FFyf1/exec";
+ 
+let currentStudent = null;
+let teacherPw = null;
+let allAssignments = [];
+let allStudents = [];
+let mySubmissions = [];  // 학생 제출 캐시
+let selectedAssignmentId = null;
+let studentSortCol = -1;
+let studentSortAsc = true;
+let currentClassFilter = 'all';
+ 
+// ── API 호출 ─────────────────────────────────
+async function api(params) {
+  const url = new URL(API);
+  Object.entries(params).forEach(([k,v]) => url.searchParams.set(k, v));
+  const res = await fetch(url);
+  return res.json();
 }
-
-function showLoading(msg) {
-  document.getElementById("loading-text").textContent = msg || "불러오는 중...";
+ 
+// ── 로딩 / 토스트 ─────────────────────────────
+function showLoading(msg="불러오는 중...") {
+  document.getElementById("loading-text").textContent = msg;
   document.getElementById("loading").classList.remove("hidden");
 }
 function hideLoading() { document.getElementById("loading").classList.add("hidden"); }
-
-function showToast(msg) {
-  var el = document.getElementById("toast");
+function toast(msg) {
+  const el = document.getElementById("toast");
   el.textContent = msg;
   el.classList.add("show");
-  setTimeout(function() { el.classList.remove("show"); }, 2800);
+  setTimeout(() => el.classList.remove("show"), 2800);
 }
-
+ 
+// ── 페이지 전환 ───────────────────────────────
 function showPage(id) {
-  document.querySelectorAll(".page").forEach(function(p) { p.classList.remove("active"); });
-  document.getElementById(id).classList.add("active");
-}
-
-function switchStudentTab(tab) {
-  document.querySelectorAll("#page-student .tab-btn").forEach(function(b) { b.classList.remove("active"); });
-  document.getElementById("s-tab-btn-" + tab).classList.add("active");
-  document.getElementById("s-tab-submit").classList.add("hidden");
-  document.getElementById("s-tab-my").classList.add("hidden");
-  document.getElementById("s-tab-" + tab).classList.remove("hidden");
-  if (tab === "my") loadMySubmissions();
-}
-
-function switchTeacherTab(tab) {
-  document.querySelectorAll("#page-teacher .tab-btn").forEach(function(b) { b.classList.remove("active"); });
-  document.getElementById("t-tab-btn-" + tab).classList.add("active");
-  ["submissions","students","assignments"].forEach(function(t) {
-    document.getElementById("t-tab-" + t).classList.add("hidden");
+  document.querySelectorAll(".page").forEach(p => {
+    p.style.display = 'none';
+    p.classList.remove("active");
   });
-  document.getElementById("t-tab-" + tab).classList.remove("hidden");
-  if (tab === "submissions") { loadTeacherFilters(); loadAllSubmissions(); }
-  if (tab === "students") loadStudents();
-  if (tab === "assignments") loadTeacherAssignments();
+  const target = document.getElementById(id);
+  target.style.display = 'block';
+  target.classList.add("active");
 }
-
-// ── 로그인 ──
-function doLoginStudent() {
-  var code = document.getElementById("student-code").value.trim();
-  if (!code || code.length < 6) { showToast("6자리 코드를 입력해주세요."); return; }
+ 
+// ── 탭 전환 ──────────────────────────────────
+function switchTab(prefix, tab, e) {
+  const pageId = prefix === 's' ? 'page-student' : 'page-teacher';
+  document.querySelectorAll(`#${pageId} .tab-btn`).forEach(b => b.classList.remove("active"));
+  const clickedBtn = e ? e.target : document.querySelector(`#${pageId} .tab-btn[data-tab="${tab}"]`);
+  if (clickedBtn) clickedBtn.classList.add("active");
+  document.querySelectorAll(`[id^="${prefix}-tab-"]`).forEach(el => el.classList.add("hidden"));
+  document.getElementById(`${prefix}-tab-${tab}`).classList.remove("hidden");
+ 
+  if (prefix === 's' && tab === 'my') loadMySubmissions();
+  if (prefix === 't' && tab === 'submissions') { loadTeacherFilters(); loadAllSubmissions(); }
+  if (prefix === 't' && tab === 'students') loadStudents();
+  if (prefix === 't' && tab === 'assignments') loadTeacherAssignments();
+}
+ 
+// ══════════════════════════════════════════════
+// 로그인
+// ══════════════════════════════════════════════
+async function loginStudent() {
+  const code = document.getElementById("student-code").value.trim();
+  if (!code || code.length < 6) { toast("6자리 코드를 입력해주세요."); return; }
   showLoading("확인 중...");
-  callAPI({ action: "login", code: code }).then(function(res) {
+  try {
+    const res = await api({ action: "login", code });
     hideLoading();
     if (res.success) {
       currentStudent = res.student;
       document.getElementById("s-name").textContent = res.student.name;
-      document.getElementById("s-class").textContent = res.student.class + " " + (res.student.number ? res.student.number + "번" : "");
+      document.getElementById("s-class").textContent = res.student.class + (res.student.number ? " · " + res.student.number : "");
+      document.getElementById("s-avatar").textContent = res.student.name[0];
       showPage("page-student");
       loadStudentAssignments();
     } else {
-      showToast("❌ " + res.message);
+      toast("❌ " + res.message);
     }
-  }).catch(function() { hideLoading(); showToast("연결 오류가 발생했습니다."); });
+  } catch(e) { hideLoading(); toast("연결 오류가 발생했습니다."); }
 }
-
-function doLoginTeacher() {
-  var pw = document.getElementById("teacher-pw").value;
-  if (!pw) { showToast("비밀번호를 입력해주세요."); return; }
+ 
+async function loginTeacher() {
+  const pw = document.getElementById("teacher-pw").value;
+  if (!pw) { toast("비밀번호를 입력해주세요."); return; }
   showLoading("확인 중...");
-  callAPI({ action: "teacherLogin", password: pw }).then(function(res) {
+  try {
+    const res = await api({ action: "teacherLogin", password: pw });
     hideLoading();
     if (res.success) {
       teacherPw = pw;
@@ -423,294 +774,431 @@ function doLoginTeacher() {
       loadTeacherFilters();
       loadAllSubmissions();
     } else {
-      showToast("❌ " + res.message);
+      toast("❌ " + res.message);
     }
-  }).catch(function() { hideLoading(); showToast("연결 오류가 발생했습니다."); });
+  } catch(e) { hideLoading(); toast("연결 오류가 발생했습니다."); }
 }
-
-function doLogout() {
+ 
+function logout() {
   currentStudent = null; teacherPw = null;
+  mySubmissions = [];
   document.getElementById("student-code").value = "";
   document.getElementById("teacher-pw").value = "";
   showPage("page-login");
 }
-
-// ── 학생: 과제 ──
-function loadStudentAssignments() {
+ 
+// ══════════════════════════════════════════════
+// 학생: 과제 목록 (가로 그리드 + 색상 구분)
+// ══════════════════════════════════════════════
+async function loadStudentAssignments() {
   showLoading();
-  callAPI({ action: "getAssignments" }).then(function(res) {
-    hideLoading();
-    allAssignments = res.assignments || [];
-    var el = document.getElementById("assignment-list");
-    if (!allAssignments.length) {
-      el.innerHTML = '<div class="empty-state"><div class="icon">📋</div><p>등록된 과제가 없습니다.</p></div>';
-      return;
-    }
-    el.innerHTML = allAssignments.map(function(a, i) {
-      return '<div class="assignment-card" id="ac-' + a.id + '" onclick="selectAssignment(\'' + a.id + '\')">' +
-        '<div class="a-num">' + (i+1) + '</div>' +
-        '<div class="a-info">' +
-          '<div class="a-title">' + escHtml(a.title) + '</div>' +
-          (a.description ? '<div class="a-desc">' + escHtml(a.description) + '</div>' : '') +
-          (a.due_date ? '<div class="a-due">마감: ' + a.due_date + '</div>' : '') +
-        '</div></div>';
-    }).join('');
-  }).catch(function() { hideLoading(); showToast("과제를 불러오지 못했습니다."); });
+  const [aRes, sRes] = await Promise.all([
+    api({ action: "getAssignments" }),
+    api({ action: "getMySubmissions", student_code: currentStudent.code })
+  ]);
+  hideLoading();
+  allAssignments = aRes.assignments || [];
+  mySubmissions = sRes.submissions || [];
+ 
+  const submittedIds = new Set(mySubmissions.map(s => s.assignment_id));
+  const el = document.getElementById("assignment-list");
+ 
+  if (!allAssignments.length) {
+    el.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="icon">📋</div><p>등록된 과제가 없습니다.</p></div>`;
+    return;
+  }
+  el.innerHTML = allAssignments.map((a, i) => {
+    const done = submittedIds.has(a.id);
+    return `
+    <div class="assignment-pill ${done ? 'submitted' : 'not-submitted'}" id="ac-${a.id}" onclick="selectAssignment('${a.id}')">
+      <div class="ap-status ${done ? 'green' : 'red'}"></div>
+      <div class="ap-num">과제 ${i+1}</div>
+      <div class="ap-title">${escHtml(a.title)}</div>
+      ${a.due_date ? `<div class="ap-due">마감 ${a.due_date}</div>` : ''}
+    </div>`;
+  }).join('');
 }
-
+ 
 function selectAssignment(id) {
+  // 이미 제출한 과제면 제출 불가
+  const already = mySubmissions.find(s => s.assignment_id === id);
+  if (already) {
+    toast("✅ 이미 제출한 과제입니다. 수정이 불가합니다.");
+    return;
+  }
   selectedAssignmentId = id;
-  document.querySelectorAll(".assignment-card").forEach(function(c) { c.classList.remove("selected"); });
-  document.getElementById("ac-" + id).classList.add("selected");
-  var a = allAssignments.find(function(x) { return x.id === id; });
-  document.getElementById("submit-form-title").textContent = "📝 " + a.title + " 제출";
+  document.querySelectorAll(".assignment-pill").forEach(c => c.classList.remove("selected"));
+  document.getElementById("ac-"+id).classList.add("selected");
+  const a = allAssignments.find(x => x.id === id);
+  document.getElementById("submit-form-title").textContent = `📝 ${a.title} 제출`;
   document.getElementById("submit-form").classList.remove("hidden");
   document.getElementById("sub-content").value = "";
   document.getElementById("sub-file").value = "";
+  document.getElementById("submit-form").scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
-
+ 
 function cancelSubmit() {
   selectedAssignmentId = null;
-  document.querySelectorAll(".assignment-card").forEach(function(c) { c.classList.remove("selected"); });
+  document.querySelectorAll(".assignment-pill").forEach(c => c.classList.remove("selected"));
   document.getElementById("submit-form").classList.add("hidden");
 }
-
-function doSubmitAssignment() {
-  if (!selectedAssignmentId) { showToast("과제를 선택해주세요."); return; }
-  var content = document.getElementById("sub-content").value.trim();
-  if (!content) { showToast("내용을 입력해주세요."); return; }
-  var file = document.getElementById("sub-file").value.trim();
-  showLoading("제출 중...");
-  callAPI({
-    action: "submitAssignment",
-    student_code: currentStudent.code,
-    assignment_id: selectedAssignmentId,
-    content: content,
-    file_url: file
-  }).then(function(res) {
-    hideLoading();
-    if (res.success) { showToast("✅ 제출 완료!"); cancelSubmit(); }
-    else { showToast("❌ " + res.message); }
-  }).catch(function() { hideLoading(); showToast("오류가 발생했습니다."); });
-}
-
-// ── 학생: 내 제출물 ──
-function loadMySubmissions() {
-  showLoading();
-  Promise.all([
-    callAPI({ action: "getMySubmissions", student_code: currentStudent.code }),
-    callAPI({ action: "getAssignments" })
-  ]).then(function(results) {
-    hideLoading();
-    var subRes = results[0], aRes = results[1];
-    var assignMap = {};
-    (aRes.assignments || []).forEach(function(a) { assignMap[a.id] = a.title; });
-    var list = subRes.submissions || [];
-    var el = document.getElementById("my-submissions-list");
-    if (!list.length) {
-      el.innerHTML = '<div class="empty-state"><div class="icon">📝</div><p>아직 제출한 과제가 없어요.</p></div>';
-      return;
-    }
-    list.sort(function(a,b) { return b.submitted_at.localeCompare(a.submitted_at); });
-    el.innerHTML = list.map(function(s) {
-      return '<div class="card">' +
-        '<div class="card-header">' +
-          '<div><div class="card-title">' + escHtml(assignMap[s.assignment_id] || s.assignment_id) + '</div>' +
-          '<div class="card-meta">제출: ' + s.submitted_at + '</div></div>' +
-          (s.feedback ? '<span class="chip">피드백 있음</span>' : '<span class="chip gray">피드백 대기</span>') +
-        '</div>' +
-        '<div class="card-body">' + escHtml(s.content) + '</div>' +
-        (s.file_url ? '<div style="margin-top:10px"><a href="' + s.file_url + '" target="_blank" style="font-size:13px;color:var(--primary)">📎 첨부 파일 보기</a></div>' : '') +
-        (s.feedback
-          ? '<div class="feedback-box"><div class="fb-label">✏️ 선생님 피드백 · ' + s.feedback.created_at + '</div><div class="fb-content">' + escHtml(s.feedback.content) + '</div></div>'
-          : '<div class="no-feedback">아직 피드백이 없습니다.</div>') +
-        '</div>';
-    }).join('');
-  }).catch(function() { hideLoading(); showToast("불러오지 못했습니다."); });
-}
-
-// ── 교사: 필터 ──
-function loadTeacherFilters() {
-  Promise.all([
-    callAPI({ action: "getAssignments" }),
-    callAPI({ action: "getStudents", password: teacherPw })
-  ]).then(function(results) {
-    allAssignments = results[0].assignments || [];
-    allStudents = results[1].students || [];
-    var aFilter = document.getElementById("t-filter-assignment");
-    aFilter.innerHTML = '<option value="">전체 과제</option>' +
-      allAssignments.map(function(a) { return '<option value="' + a.id + '">' + escHtml(a.title) + '</option>'; }).join('');
-    var byClass = {};
-    allStudents.forEach(function(s) { if (!byClass[s.class]) byClass[s.class] = []; byClass[s.class].push(s); });
-    var sFilter = document.getElementById("t-filter-student");
-    sFilter.innerHTML = '<option value="">전체 학생</option>' +
-      Object.keys(byClass).map(function(cls) {
-        return '<optgroup label="' + cls + '">' +
-          byClass[cls].map(function(s) {
-            return '<option value="' + s.code + '">' + escHtml(s.name) + ' (' + s.class + ' ' + s.number + '번)</option>';
-          }).join('') + '</optgroup>';
-      }).join('');
-  });
-}
-
-// ── 교사: 제출물 ──
-function loadAllSubmissions() {
-  var assignId = document.getElementById("t-filter-assignment") ? document.getElementById("t-filter-assignment").value : "";
-  var studentCode = document.getElementById("t-filter-student") ? document.getElementById("t-filter-student").value : "";
-  showLoading();
-  callAPI({ action: "getAllSubmissions", password: teacherPw, assignment_id: assignId, student_code: studentCode }).then(function(res) {
-    hideLoading();
-    var list = res.submissions || [];
-    var assignMap = {}; allAssignments.forEach(function(a) { assignMap[a.id] = a.title; });
-    var studentMap = {}; allStudents.forEach(function(s) { studentMap[s.code] = s; });
-    var el = document.getElementById("all-submissions-list");
-    if (!list.length) {
-      el.innerHTML = '<div class="empty-state"><div class="icon">📋</div><p>제출물이 없습니다.</p></div>';
-      return;
-    }
-    list.sort(function(a,b) { return b.submitted_at.localeCompare(a.submitted_at); });
-    el.innerHTML = list.map(function(s) {
-      var st = studentMap[s.student_code] || { name: s.student_code, class: "", number: "" };
-      return '<div class="sub-card">' +
-        '<div class="sub-card-header">' +
-          '<div><div class="sub-student">' + escHtml(st.name) + ' <span style="font-weight:400;font-size:13px;color:var(--text3)">' + st.class + ' ' + (st.number ? st.number + '번' : '') + '</span></div>' +
-          '<div class="sub-meta">과제: ' + escHtml(assignMap[s.assignment_id] || s.assignment_id) + ' · 제출: ' + s.submitted_at + '</div></div>' +
-          (s.feedback ? '<span class="chip">피드백 완료</span>' : '<span class="chip orange">미완료</span>') +
-        '</div>' +
-        '<div class="sub-content">' + escHtml(s.content) + '</div>' +
-        (s.file_url ? '<div style="margin-bottom:12px"><a href="' + s.file_url + '" target="_blank" style="font-size:13px;color:var(--primary)">📎 첨부 파일 보기</a></div>' : '') +
-        (s.feedback ? '<div class="feedback-saved">' + escHtml(s.feedback.content) + '</div>' : '') +
-        '<div>' +
-          '<label style="margin-bottom:6px;display:block;font-size:13px;color:var(--text2);font-weight:500">' + (s.feedback ? '피드백 수정' : '피드백 작성') + '</label>' +
-          '<textarea id="fb-' + s.id + '" style="width:100%;min-height:80px;font-family:inherit;font-size:14px;border:1.5px solid var(--border);border-radius:8px;padding:10px 14px;background:var(--surface);color:var(--text);outline:none" placeholder="학생에게 전달할 피드백을 입력하세요.">' + (s.feedback ? escHtml(s.feedback.content) : '') + '</textarea>' +
-          '<div style="display:flex;justify-content:flex-end;margin-top:8px">' +
-            '<button class="btn-primary btn-sm" onclick="doSaveFeedback(\'' + s.id + '\',\'' + s.student_code + '\',\'' + s.assignment_id + '\')">' + (s.feedback ? '수정 저장' : '피드백 저장') + '</button>' +
-          '</div>' +
-        '</div>' +
-        '</div>';
-    }).join('');
-  }).catch(function() { hideLoading(); showToast("불러오지 못했습니다."); });
-}
-
-function doSaveFeedback(subId, studentCode, assignmentId) {
-  var el = document.getElementById("fb-" + subId);
-  if (!el) return;
-  var content = el.value.trim();
-  if (!content) { showToast("피드백 내용을 입력해주세요."); return; }
-  showLoading("저장 중...");
-  callAPI({ action: "submitFeedback", password: teacherPw, submission_id: subId, student_code: studentCode, assignment_id: assignmentId, content: content }).then(function(res) {
-    hideLoading();
-    if (res.success) { showToast("✅ 피드백이 저장되었습니다."); loadAllSubmissions(); }
-    else { showToast("❌ " + res.message); }
-  }).catch(function() { hideLoading(); showToast("오류가 발생했습니다."); });
-}
-
-// ── 교사: 학생 ──
-function loadStudents() {
-  showLoading();
-  callAPI({ action: "getStudents", password: teacherPw }).then(function(res) {
-    hideLoading();
-    allStudents = res.students || [];
-    var tbody = document.getElementById("student-tbody");
-    if (!allStudents.length) {
-      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text3);padding:30px">등록된 학생이 없습니다.</td></tr>';
-      return;
-    }
-    var sorted = allStudents.slice().sort(function(a,b) { return a.class.localeCompare(b.class) || (a.number - b.number); });
-    tbody.innerHTML = sorted.map(function(s) {
-      return '<tr><td><span class="code-badge">' + s.code + '</span></td><td>' + escHtml(s.name) + '</td><td>' + escHtml(s.class) + '</td><td>' + s.number + '</td></tr>';
-    }).join('');
-  }).catch(function() { hideLoading(); showToast("불러오지 못했습니다."); });
-}
-
-function toggleAddStudentForm() {
-  var f = document.getElementById("add-student-form");
-  f.classList.toggle("hidden");
-}
-
-function doAddStudent() {
-  var name = document.getElementById("new-s-name").value.trim();
-  var cls = document.getElementById("new-s-class").value.trim();
-  var num = document.getElementById("new-s-number").value.trim();
-  if (!name || !cls) { showToast("이름과 반을 입력해주세요."); return; }
-  showLoading("추가 중...");
-  callAPI({ action: "addStudent", password: teacherPw, name: name, class_name: cls, number: num }).then(function(res) {
-    hideLoading();
-    if (res.success) { showToast("✅ " + name + " 추가! 코드: " + res.code); toggleAddStudentForm(); loadStudents(); }
-    else { showToast("❌ " + res.message); }
-  }).catch(function() { hideLoading(); showToast("오류가 발생했습니다."); });
-}
-
-function doBulkAddStudents() {
-  var cls = document.getElementById("bulk-class").value.trim();
-  var names = document.getElementById("bulk-names").value.trim().split("\n").map(function(n) { return n.trim(); }).filter(Boolean);
-  if (!cls || !names.length) { showToast("반 이름과 학생 이름을 입력해주세요."); return; }
-  showLoading("0/" + names.length + " 추가 중...");
-  var ok = 0;
-  function addNext(i) {
-    if (i >= names.length) {
-      hideLoading();
-      showToast("✅ " + ok + "명 추가 완료!");
-      document.getElementById("bulk-class").value = "";
-      document.getElementById("bulk-names").value = "";
-      loadStudents();
-      return;
-    }
-    document.getElementById("loading-text").textContent = (i+1) + "/" + names.length + " 추가 중...";
-    callAPI({ action: "addStudent", password: teacherPw, name: names[i], class_name: cls, number: i+1 }).then(function(res) {
-      if (res.success) ok++;
-      setTimeout(function() { addNext(i+1); }, 300);
-    }).catch(function() { setTimeout(function() { addNext(i+1); }, 300); });
+ 
+async function submitAssignment() {
+  if (!selectedAssignmentId) { toast("과제를 선택해주세요."); return; }
+  // 이중 제출 방지
+  if (mySubmissions.find(s => s.assignment_id === selectedAssignmentId)) {
+    toast("이미 제출한 과제입니다."); return;
   }
-  addNext(0);
-}
-
-// ── 교사: 과제 ──
-function loadTeacherAssignments() {
-  showLoading();
-  callAPI({ action: "getAssignments" }).then(function(res) {
-    hideLoading();
-    var list = res.assignments || [];
-    var el = document.getElementById("t-assignment-list");
-    if (!list.length) {
-      el.innerHTML = '<div class="empty-state"><div class="icon">📋</div><p>등록된 과제가 없습니다.</p></div>';
-      return;
-    }
-    el.innerHTML = list.map(function(a, i) {
-      return '<div class="card">' +
-        '<div class="card-header">' +
-          '<div><div class="card-title">' + escHtml(a.title) + '</div>' +
-          '<div class="card-meta">ID: ' + a.id + ' · 등록: ' + a.created_at + (a.due_date ? ' · 마감: ' + a.due_date : '') + '</div></div>' +
-          '<span class="chip">#' + (i+1) + '</span>' +
-        '</div>' +
-        (a.description ? '<div class="card-body">' + escHtml(a.description) + '</div>' : '') +
-        '</div>';
-    }).join('');
-  }).catch(function() { hideLoading(); showToast("불러오지 못했습니다."); });
-}
-
-function doAddAssignment() {
-  var title = document.getElementById("new-a-title").value.trim();
-  var desc = document.getElementById("new-a-desc").value.trim();
-  var due = document.getElementById("new-a-due").value;
-  if (!title) { showToast("과제명을 입력해주세요."); return; }
-  showLoading("등록 중...");
-  callAPI({ action: "addAssignment", password: teacherPw, title: title, description: desc, due_date: due }).then(function(res) {
+  const content = document.getElementById("sub-content").value.trim();
+  if (!content) { toast("내용을 입력해주세요."); return; }
+  const file = document.getElementById("sub-file").value.trim();
+  showLoading("제출 중...");
+  try {
+    const res = await api({
+      action: "submitAssignment",
+      student_code: currentStudent.code,
+      assignment_id: selectedAssignmentId,
+      content, file_url: file
+    });
     hideLoading();
     if (res.success) {
-      showToast("✅ 과제가 등록되었습니다.");
-      document.getElementById("new-a-title").value = "";
-      document.getElementById("new-a-desc").value = "";
-      document.getElementById("new-a-due").value = "";
-      loadTeacherAssignments();
-      loadTeacherFilters();
-    } else { showToast("❌ " + res.message); }
-  }).catch(function() { hideLoading(); showToast("오류가 발생했습니다."); });
+      toast("✅ 제출 완료!");
+      cancelSubmit();
+      loadStudentAssignments(); // 색상 갱신
+    } else { toast("❌ " + res.message); }
+  } catch(e) { hideLoading(); toast("오류가 발생했습니다."); }
 }
-
+ 
+// ══════════════════════════════════════════════
+// 학생: 내 제출물
+// ══════════════════════════════════════════════
+async function loadMySubmissions() {
+  showLoading();
+  const [subRes, aRes] = await Promise.all([
+    api({ action: "getMySubmissions", student_code: currentStudent.code }),
+    api({ action: "getAssignments" })
+  ]);
+  hideLoading();
+  mySubmissions = subRes.submissions || [];
+  const assignMap = {};
+  (aRes.assignments||[]).forEach(a => assignMap[a.id] = a.title);
+  const el = document.getElementById("my-submissions-list");
+  if (!mySubmissions.length) {
+    el.innerHTML = `<div class="empty-state"><div class="icon">📝</div><p>아직 제출한 과제가 없어요.</p></div>`;
+    return;
+  }
+  const sorted = [...mySubmissions].sort((a,b) => b.submitted_at.localeCompare(a.submitted_at));
+  el.innerHTML = sorted.map(s => `
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">${escHtml(assignMap[s.assignment_id] || s.assignment_id)}</div>
+          <div class="card-meta">제출: ${s.submitted_at}</div>
+        </div>
+        ${s.feedback ? '<span class="chip chip-green">✓ 피드백 있음</span>' : '<span class="chip chip-gray">피드백 대기</span>'}
+      </div>
+      <div class="card-body">${escHtml(s.content)}</div>
+      ${s.file_url ? `<div style="margin-top:10px"><a href="${s.file_url}" target="_blank" style="font-size:13px;color:var(--ig-blue)">📎 첨부 파일 보기</a></div>` : ''}
+      ${s.feedback
+        ? `<div class="feedback-box">
+            <div class="fb-label">✏️ 선생님 피드백 <span style="font-weight:400;color:#a16207">${s.feedback.created_at}</span></div>
+            <div class="fb-content">${escHtml(s.feedback.content)}</div>
+           </div>`
+        : `<div class="no-feedback">아직 피드백이 없습니다.</div>`
+      }
+    </div>
+  `).join('');
+}
+ 
+// ══════════════════════════════════════════════
+// 교사: 필터 로드
+// ══════════════════════════════════════════════
+async function loadTeacherFilters() {
+  const [aRes, sRes] = await Promise.all([
+    api({ action: "getAssignments" }),
+    api({ action: "getStudents", password: teacherPw })
+  ]);
+  allAssignments = aRes.assignments || [];
+  allStudents = sRes.students || [];
+ 
+  const aFilter = document.getElementById("t-filter-assignment");
+  aFilter.innerHTML = '<option value="">전체 과제</option>' +
+    allAssignments.map(a => `<option value="${a.id}">${escHtml(a.title)}</option>`).join('');
+ 
+  const sFilter = document.getElementById("t-filter-student");
+  const byClass = {};
+  allStudents.forEach(s => { (byClass[s.class] = byClass[s.class]||[]).push(s); });
+  sFilter.innerHTML = '<option value="">전체 학생</option>' +
+    Object.entries(byClass).map(([cls, sts]) =>
+      `<optgroup label="${escHtml(cls)}">${sts.map(s => `<option value="${s.code}">${escHtml(s.name)} (${escHtml(s.class)} ${s.number})</option>`).join('')}</optgroup>`
+    ).join('');
+}
+ 
+// ══════════════════════════════════════════════
+// 교사: 제출물 조회
+// ══════════════════════════════════════════════
+async function loadAllSubmissions() {
+  const assignId = document.getElementById("t-filter-assignment")?.value || "";
+  const studentCode = document.getElementById("t-filter-student")?.value || "";
+  const sortVal = document.getElementById("t-sort")?.value || "date_desc";
+  showLoading();
+  const res = await api({
+    action: "getAllSubmissions", password: teacherPw,
+    assignment_id: assignId, student_code: studentCode
+  });
+  hideLoading();
+  let list = res.submissions || [];
+ 
+  const assignMap = {}; allAssignments.forEach(a => assignMap[a.id] = a.title);
+  const studentMap = {}; allStudents.forEach(s => studentMap[s.code] = s);
+ 
+  // 정렬
+  if (sortVal === 'student') list.sort((a,b) => (studentMap[a.student_code]?.name||'').localeCompare(studentMap[b.student_code]?.name||''));
+  else if (sortVal === 'assignment') list.sort((a,b) => (assignMap[a.assignment_id]||'').localeCompare(assignMap[b.assignment_id]||''));
+  else list.sort((a,b) => b.submitted_at.localeCompare(a.submitted_at));
+ 
+  const el = document.getElementById("all-submissions-list");
+  if (!list.length) {
+    el.innerHTML = `<div class="empty-state"><div class="icon">📋</div><p>제출물이 없습니다.</p></div>`;
+    return;
+  }
+ 
+  el.innerHTML = list.map(s => {
+    const st = studentMap[s.student_code] || { name: s.student_code, class: "", number: "" };
+    return `
+    <div class="sub-card">
+      <div class="sub-card-header">
+        <div>
+          <div class="sub-student">${escHtml(st.name)} <span style="font-weight:400;font-size:13px;color:var(--ig-text3)">${escHtml(st.class)} ${st.number||''}</span></div>
+          <div class="sub-meta">과제: ${escHtml(assignMap[s.assignment_id]||s.assignment_id)} · 제출: ${s.submitted_at}</div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center">
+          ${s.feedback ? '<span class="chip chip-green">✓ 피드백 완료</span>' : '<span class="chip chip-red">미완료</span>'}
+        </div>
+      </div>
+      <div class="sub-content">${escHtml(s.content)}</div>
+      ${s.file_url ? `<div style="margin-bottom:12px"><a href="${s.file_url}" target="_blank" style="font-size:13px;color:var(--ig-blue)">📎 첨부 파일 보기</a></div>` : ''}
+      ${s.feedback ? `<div class="feedback-saved">${escHtml(s.feedback.content)}</div>` : ''}
+      <div class="feedback-input-area">
+        <label style="margin-bottom:6px">${s.feedback ? '피드백 수정' : '피드백 작성'}</label>
+        <textarea id="fb-${s.id}" placeholder="학생에게 전달할 피드백을 입력하세요.">${s.feedback ? escHtml(s.feedback.content) : ''}</textarea>
+        <div class="sub-action-bar">
+          <button class="btn-red btn-sm" onclick="rejectSubmission('${s.id}','${s.student_code}','${s.assignment_id}')">반려</button>
+          <button class="btn-primary btn-sm" onclick="saveFeedback('${s.id}','${s.student_code}','${s.assignment_id}')">
+            ${s.feedback ? '수정 저장' : '피드백 저장'}
+          </button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+ 
+async function saveFeedback(subId, studentCode, assignmentId) {
+  const content = document.getElementById("fb-"+subId)?.value.trim();
+  if (!content) { toast("피드백 내용을 입력해주세요."); return; }
+  showLoading("저장 중...");
+  const res = await api({
+    action: "submitFeedback", password: teacherPw,
+    submission_id: subId, student_code: studentCode,
+    assignment_id: assignmentId, content
+  });
+  hideLoading();
+  if (res.success) { toast("✅ 피드백이 저장되었습니다."); loadAllSubmissions(); }
+  else toast("❌ " + res.message);
+}
+ 
+async function rejectSubmission(subId, studentCode, assignmentId) {
+  if (!confirm("이 제출물을 반려하시겠습니까?\n반려 시 학생에게 '반려됨' 피드백이 등록됩니다.")) return;
+  showLoading("반려 처리 중...");
+  const res = await api({
+    action: "submitFeedback", password: teacherPw,
+    submission_id: subId, student_code: studentCode,
+    assignment_id: assignmentId,
+    content: "⚠️ 반려됨 — 과제를 다시 확인하고 재제출이 필요합니다. 담당 선생님께 문의해 주세요."
+  });
+  hideLoading();
+  if (res.success) { toast("🚫 반려 처리되었습니다."); loadAllSubmissions(); }
+  else toast("❌ " + res.message);
+}
+ 
+// ══════════════════════════════════════════════
+// 교사: 학생 관리
+// ══════════════════════════════════════════════
+async function loadStudents() {
+  showLoading();
+  const res = await api({ action: "getStudents", password: teacherPw });
+  hideLoading();
+  allStudents = res.students || [];
+  renderStudentTable(allStudents);
+  buildClassFilterButtons();
+}
+ 
+function buildClassFilterButtons() {
+  const classes = [...new Set(allStudents.map(s => s.class))].sort();
+  const bar = document.getElementById("student-class-filter");
+  bar.innerHTML = `<button class="class-filter-btn active" onclick="filterStudentsByClass('all', this)">전체</button>` +
+    classes.map(c => `<button class="class-filter-btn" onclick="filterStudentsByClass('${escHtml(c)}', this)">${escHtml(c)}</button>`).join('');
+}
+ 
+function filterStudentsByClass(cls, btn) {
+  currentClassFilter = cls;
+  document.querySelectorAll(".class-filter-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  const filtered = cls === 'all' ? allStudents : allStudents.filter(s => s.class === cls);
+  renderStudentTable(filtered);
+}
+ 
+function renderStudentTable(students) {
+  const tbody = document.getElementById("student-tbody");
+  if (!students.length) {
+    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--ig-text3);padding:30px">등록된 학생이 없습니다.</td></tr>`;
+    return;
+  }
+  const sorted = [...students].sort((a,b) => a.class.localeCompare(b.class) || String(a.number).localeCompare(String(b.number)));
+  tbody.innerHTML = sorted.map(s => `
+    <tr>
+      <td><span class="code-badge">${s.code}</span></td>
+      <td>${escHtml(s.name)}</td>
+      <td>${escHtml(s.class)}</td>
+      <td>${escHtml(s.number||'')}</td>
+    </tr>
+  `).join('');
+}
+ 
+let _tableSortDir = {};
+function sortStudentTable(col) {
+  _tableSortDir[col] = !_tableSortDir[col];
+  const asc = _tableSortDir[col];
+  const keys = ['code','name','class','number'];
+  const key = keys[col];
+  const filtered = currentClassFilter === 'all' ? allStudents : allStudents.filter(s => s.class === currentClassFilter);
+  const sorted = [...filtered].sort((a,b) => {
+    const va = String(a[key]||''), vb = String(b[key]||'');
+    return asc ? va.localeCompare(vb, 'ko') : vb.localeCompare(va, 'ko');
+  });
+  const tbody = document.getElementById("student-tbody");
+  tbody.innerHTML = sorted.map(s => `
+    <tr>
+      <td><span class="code-badge">${s.code}</span></td>
+      <td>${escHtml(s.name)}</td>
+      <td>${escHtml(s.class)}</td>
+      <td>${escHtml(s.number||'')}</td>
+    </tr>
+  `).join('');
+  // 헤더 표시
+  document.querySelectorAll("#student-table th").forEach((th, i) => {
+    th.classList.toggle("sorted", i === col);
+    const icon = th.querySelector(".sort-icon");
+    if (icon) icon.textContent = i === col ? (asc ? '↑' : '↓') : '↕';
+  });
+}
+ 
+function showAddStudentForm() { document.getElementById("add-student-form").classList.remove("hidden"); }
+function hideAddStudentForm() { document.getElementById("add-student-form").classList.add("hidden"); }
+ 
+async function addStudent() {
+  const name = document.getElementById("new-s-name").value.trim();
+  const cls = document.getElementById("new-s-class").value.trim();
+  const num = document.getElementById("new-s-number").value.trim();
+  if (!name || !cls) { toast("수업장소와 이름을 입력해주세요."); return; }
+  showLoading("추가 중...");
+  const res = await api({ action: "addStudent", password: teacherPw, name, class_name: cls, number: num });
+  hideLoading();
+  if (res.success) {
+    toast(`✅ ${name} 추가 완료! 코드: ${res.code}`);
+    hideAddStudentForm();
+    loadStudents();
+  } else toast("❌ " + res.message);
+}
+ 
+async function bulkAddStudents() {
+  const cls = document.getElementById("bulk-class").value.trim();
+  const raw = document.getElementById("bulk-names").value.trim().split("\n").map(n=>n.trim()).filter(Boolean);
+  if (!cls || !raw.length) { toast("수업장소와 학생 정보를 입력해주세요."); return; }
+ 
+  // 파싱: "학번 이름" 또는 그냥 "이름"
+  const entries = raw.map(line => {
+    const parts = line.split(/\s+/);
+    if (parts.length >= 2 && /^\d+$/.test(parts[0])) {
+      return { number: parts[0], name: parts.slice(1).join(' ') };
+    }
+    return { number: '', name: line };
+  });
+ 
+  showLoading(`0/${entries.length} 추가 중...`);
+  let ok = 0;
+  for (let i = 0; i < entries.length; i++) {
+    document.getElementById("loading-text").textContent = `${i+1}/${entries.length} 추가 중...`;
+    const res = await api({ action: "addStudent", password: teacherPw, name: entries[i].name, class_name: cls, number: entries[i].number });
+    if (res.success) ok++;
+    await new Promise(r => setTimeout(r, 300));
+  }
+  hideLoading();
+  toast(`✅ ${ok}명 추가 완료!`);
+  document.getElementById("bulk-class").value = "";
+  document.getElementById("bulk-names").value = "";
+  loadStudents();
+}
+ 
+// ══════════════════════════════════════════════
+// 교사: 과제 관리
+// ══════════════════════════════════════════════
+async function loadTeacherAssignments() {
+  showLoading();
+  const res = await api({ action: "getAssignments" });
+  hideLoading();
+  const list = res.assignments || [];
+  const el = document.getElementById("t-assignment-list");
+  if (!list.length) {
+    el.innerHTML = `<div class="empty-state"><div class="icon">📋</div><p>등록된 과제가 없습니다.</p></div>`;
+    return;
+  }
+  el.innerHTML = list.map((a,i) => `
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">${escHtml(a.title)}</div>
+          <div class="card-meta">ID: ${a.id} · 등록: ${a.created_at}${a.due_date ? ' · 마감: '+a.due_date : ''}${a.class_target ? ' · 수업장소: '+escHtml(a.class_target) : ''}</div>
+        </div>
+        <span class="chip chip-blue">#${i+1}</span>
+      </div>
+      ${a.description ? `<div class="card-body">${escHtml(a.description)}</div>` : ''}
+    </div>
+  `).join('');
+}
+ 
+async function addAssignment() {
+  const title = document.getElementById("new-a-title").value.trim();
+  const desc = document.getElementById("new-a-desc").value.trim();
+  const due = document.getElementById("new-a-due").value;
+  const classTgt = document.getElementById("new-a-class").value.trim();
+  if (!title) { toast("과제명을 입력해주세요."); return; }
+  showLoading("등록 중...");
+  const res = await api({ action: "addAssignment", password: teacherPw, title, description: desc, due_date: due, class_target: classTgt });
+  hideLoading();
+  if (res.success) {
+    toast("✅ 과제가 등록되었습니다.");
+    ["new-a-title","new-a-desc","new-a-due","new-a-class"].forEach(id => document.getElementById(id).value = "");
+    loadTeacherAssignments();
+    loadTeacherFilters();
+  } else toast("❌ " + res.message);
+}
+ 
+// ── 유틸 ─────────────────────────────────────
 function escHtml(str) {
-  return String(str || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  return String(str||"")
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;").replace(/"/g,"&quot;");
 }
+ 
+// 탭 버튼에 data-tab 속성 보완 (이벤트 위임)
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', function(e) {
+    const tabs = this.closest('.tabs');
+    tabs.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
 </script>
 </body>
 </html>
